@@ -15,7 +15,7 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
-from .restapis import get_request, analyze_review_sentiments, post_review
+from .restapis import get_request, analyze_review_sentiments
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -82,7 +82,8 @@ def registration(request):
     if not username_exist:
         # Create user in auth_user table
         user = User.objects.create_user(username=username,
-                                        first_name=first_name, last_name=last_name,
+                                        first_name=first_name,
+                                        last_name=last_name,
                                         password=password, email=email)
         # Login the user and redirect to list page
         login(request, user)
@@ -138,7 +139,7 @@ def get_dealer_details(request, dealer_id):
 
 def add_review(request):
     if request.user.is_anonymous is False:
-        data = json.loads(request.body)
+        # data = json.loads(request.body)
         try:
             # response = post_review(data)
             return JsonResponse({"status": 200})
