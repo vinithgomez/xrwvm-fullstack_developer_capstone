@@ -22,9 +22,9 @@ def analyze_sentiment(input_txt):
     neu = float(scores['neu'])
     res = "positive"
     print("pos neg nue ", pos, neg, neu)
-    if (neg > pos and neg > neu):
+    if neg > pos and neg > neu:
         res = "negative"
-    elif (neu > neg and neu > pos):
+    elif neu > neg and neu > pos:
         res = "neutral"
     res = json.dumps({"sentiment": res})
     print(res)
