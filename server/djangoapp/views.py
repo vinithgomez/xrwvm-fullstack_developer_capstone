@@ -15,7 +15,7 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
-from .restapis import get_request, analyze_review_sentiments
+from .restapis import get_request, analyze_review_sentiments, post_review
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -112,14 +112,26 @@ def get_dealerships(request, state="All"):
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 def get_dealer_reviews(request, dealer_id):
-    # if dealer id has been provided
+    # If dealer id has been provided
     if dealer_id:
-        endpoint = "/fetchReviews/dealer/"+str(dealer_id)
+        endpoint = "/fetchReviews/dealer/" + str(dealer_id)
         reviews = get_request(endpoint)
+
         for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            review_detail['sentiment'] = response['sentiment']
+            # Call analyze_review_sentiments
+            # check if the response is valid
+            response = analyze_review_sentiments(
+                review_detail['review'])
+            print(response)
+
+            if response is not None and 'sentiment' in response:
+                review_detail['sentiment'] = response['sentiment']
+            else:
+                # If there's no sentiment, default to 'neutral'
+                review_detail['sentiment'] = 'neutral'
+
         return JsonResponse({"status": 200, "reviews": reviews})
+
     else:
         return JsonResponse({"status": 400, "message": "Bad Request"})
 
@@ -138,13 +150,29 @@ def get_dealer_details(request, dealer_id):
 
 
 def add_review(request):
-    if request.user.is_anonymous is False:
-        # data = json.loads(request.body)
+    if request.user.is_authenticated:
+        data = json.loads(request.body)
+        print(data)  # Log the incoming data for debugging
         try:
-            # response = post_review(data)
-            return JsonResponse({"status": 200})
-        except Exception as err:
-            return JsonResponse({"status": 401,
-                                 "message": "Error in posting review"}, err)
+            response = post_review(data)
+            if response.get("status") == 200:
+                print("Review posted successfully:", response)
+            return JsonResponse(
+                {
+                    "status": 200,
+                    "message": "Review posted successfully",
+                    "review": data
+                })
+        except Exception as e:
+            print(f"Error in posting review: {e}")
+            return JsonResponse(
+                {
+                    "status": 401,
+                    "message": "Error in posting review"
+                })
     else:
-        return JsonResponse({"status": 403, "message": "Unauthorized"})
+        return JsonResponse(
+            {
+                "status": 403,
+                "message": "Unauthorized"
+            })
