@@ -1,7 +1,7 @@
 # IBM Full Stack Application Development Capstone Project
 
 # TASK 1 :- 
-## LINK :- `[https://github.com/digital-installer/xrwvm-fullstack_developer_capstone](https://github.com/vinithgomez/xrwvm-fullstack_developer_capstone)`
+## LINK :- `https://github.com/vinithgomez/xrwvm-fullstack_developer_capstone/`
 
 # TASK 2 :- 
 ## TITLE :- `Django server running.`
