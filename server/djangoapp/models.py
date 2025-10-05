@@ -31,7 +31,6 @@ class CarMake(models.Model):
 # - __str__ method to print a car make object
 
 
-
 class CarModel(models.Model):
     car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
